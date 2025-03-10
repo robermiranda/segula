@@ -14,7 +14,6 @@ export class EmpleadoService {
     create(
         createEmpleadoDto: CreateEmpleadoDto,
     ): Promise<CreateEmpleadoDto & Empleado> {
-        console.log('createEmpleadoDto', createEmpleadoDto);
         return this.empleadoRepository.save(createEmpleadoDto);
     }
 
