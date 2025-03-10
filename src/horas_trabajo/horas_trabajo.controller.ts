@@ -1,5 +1,5 @@
 // eslint-disable-next-line prettier/prettier
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { HorasTrabajoService } from './horas_trabajo.service';
 import { CreateHorasTrabajoDto } from './dto/create-horas_trabajo.dto';
 
@@ -18,13 +18,36 @@ export class HorasTrabajoController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.horasTrabajoService.findOne(+id);
+    async findOne(@Param('id') id: string) {
+        const idNumber: number = parseInt(id, 10);
+        if (Number.isNaN(idNumber)) {
+            return { message: 'Identificador NO valido' };
+        }
+
+        const horasTrabajo = await this.horasTrabajoService.findOne(idNumber);
+
+        if (!horasTrabajo) {
+            return { message: 'Registro no encontrado' };
+        }
+
+        return horasTrabajo;
     }
 
     @Get('empleado/:id')
-    findByEmpleado(@Param('id') id: string) {
-        return this.horasTrabajoService.findByEmpleado(+id);
+    async findByEmpleado(@Param('id') id: string) {
+        const idNumber: number = parseInt(id, 10);
+        if (Number.isNaN(idNumber)) {
+            return { message: 'Identificador NO valido' };
+        }
+
+        const horasTrabajo =
+            await this.horasTrabajoService.findByEmpleado(idNumber);
+
+        if (horasTrabajo.length === 0) {
+            return { message: 'Empleado sin registros de horas trabajadas' };
+        }
+
+        return horasTrabajo;
     }
 
     @Get('empleado/:id/:fecha1/:fecha2/:tarifa')
@@ -77,10 +100,5 @@ export class HorasTrabajoController {
             tarifaHoraria,
             payroll,
         };
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.horasTrabajoService.remove(+id);
     }
 }

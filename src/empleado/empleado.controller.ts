@@ -18,12 +18,35 @@ export class EmpleadoController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.empleadoService.findOne(+id);
+    async findOne(@Param('id') id: string) {
+        const idNumber: number = parseInt(id, 10);
+        if (Number.isNaN(idNumber)) {
+            return { message: 'Identificador NO valido' };
+        }
+
+        const empleado = await this.empleadoService.findOne(idNumber);
+        if (!empleado) {
+            return { message: 'Empleado no encontrado' };
+        }
+
+        return empleado;
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.empleadoService.remove(+id);
+    async remove(@Param('id') id: string) {
+        const idNumber: number = parseInt(id, 10);
+        if (Number.isNaN(idNumber)) {
+            return { message: 'Identificador NO valido' };
+        }
+
+        const deleteResult = await this.empleadoService.remove(idNumber);
+
+        if (deleteResult.affected) {
+            return {
+                message: `Registros eliminados: ${deleteResult.affected}`,
+            };
+        }
+
+        return { message: 'Empleado no encontrado' };
     }
 }
