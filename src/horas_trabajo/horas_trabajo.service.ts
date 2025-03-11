@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateHorasTrabajoDto } from './dto/create-horas_trabajo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
@@ -13,10 +13,19 @@ export class HorasTrabajoService {
         private horasTrabajoRepository: Repository<HorasTrabajo>,
     ) {}
 
-    create(
+    async create(
         createHorasTrabajoDto: CreateHorasTrabajoDto,
     ): Promise<CreateHorasTrabajoDto & HorasTrabajo> {
-        return this.horasTrabajoRepository.save(createHorasTrabajoDto);
+        try {
+            return await this.horasTrabajoRepository.save(
+                createHorasTrabajoDto,
+            );
+        } catch (error: unknown) {
+            throw new HttpException(
+                'Error al crear el registro. Posible duplicación de dias trabajados',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     async findAll(): Promise<HorasTrabajo[]> {
