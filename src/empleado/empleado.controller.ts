@@ -1,7 +1,8 @@
 // eslint-disable-next-line prettier/prettier
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
 import { EmpleadoService } from './empleado.service';
 import { CreateEmpleadoDto } from './dto/create-empleado.dto';
+import { IdGuard } from '../guards/id.guard';
 
 @Controller('empleado')
 export class EmpleadoController {
@@ -18,13 +19,9 @@ export class EmpleadoController {
     }
 
     @Get(':id')
+    @UseGuards(IdGuard)
     async findOne(@Param('id') id: string) {
-        const idNumber: number = parseInt(id, 10);
-        if (Number.isNaN(idNumber)) {
-            return { message: 'Identificador NO valido' };
-        }
-
-        const empleado = await this.empleadoService.findOne(idNumber);
+        const empleado = await this.empleadoService.findOne(parseInt(id, 10));
         if (!empleado) {
             return { message: 'Empleado no encontrado' };
         }
@@ -33,13 +30,11 @@ export class EmpleadoController {
     }
 
     @Delete(':id')
+    @UseGuards(IdGuard)
     async remove(@Param('id') id: string) {
-        const idNumber: number = parseInt(id, 10);
-        if (Number.isNaN(idNumber)) {
-            return { message: 'Identificador NO valido' };
-        }
-
-        const deleteResult = await this.empleadoService.remove(idNumber);
+        const deleteResult = await this.empleadoService.remove(
+            parseInt(id, 10),
+        );
 
         if (deleteResult.affected) {
             return {
