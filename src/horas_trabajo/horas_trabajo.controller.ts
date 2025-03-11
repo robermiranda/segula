@@ -37,7 +37,9 @@ export class HorasTrabajoController {
     async findByEmpleado(@Param('id') id: string) {
         const idNumber: number = parseInt(id, 10);
         if (Number.isNaN(idNumber)) {
-            return { message: 'Identificador NO valido' };
+            return {
+                message: `Identificador de empleado ${id} NO valido`,
+            };
         }
 
         const horasTrabajo =
@@ -50,55 +52,94 @@ export class HorasTrabajoController {
         return horasTrabajo;
     }
 
-    @Get('empleado/:id/:fecha1/:fecha2/:tarifa')
-    async findPayroll(
+    @Get('payroll/:id/:fecha1/:fecha2/:tarifa')
+    async getPayroll(
         @Param('id') id: string,
         @Param('fecha1') fecha1: string,
         @Param('fecha2') fecha2: string,
-        @Param('tarifa') tarifaHoraria: string,
+        @Param('tarifa') tarifa: string,
     ) {
-        const horasTrabajo =
-            await this.horasTrabajoService.findByEmpleadoAndFechas(
-                +id,
-                fecha1,
-                fecha2,
+        const idNumber: number = parseInt(id, 10);
+        const tarifaHoraria: number = parseInt(tarifa, 10);
+
+        // validaciones básicas
+        if (Number.isNaN(idNumber)) {
+            return {
+                message: `Identificador de empleado: ${id} NO valido`,
+            };
+        }
+
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha1)) {
+            return {
+                message: 'Fecha 1 NO valida. Formato requerido: aaaa-mm-dd',
+            };
+        }
+
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha2)) {
+            return {
+                message: 'Fecha 2 NO valida. Formato requerido: aaaa-mm-dd',
+            };
+        }
+
+        if (new Date(fecha1) > new Date(fecha2)) {
+            return { message: 'Fecha 1 NO puede ser mayor que Fecha 2' };
+        }
+
+        if (isNaN(tarifaHoraria)) {
+            return { message: 'Tarifa horaria NO valida' };
+        }
+
+        try {
+            const horasTrabajo =
+                await this.horasTrabajoService.findByEmpleadoAndFechas(
+                    idNumber,
+                    fecha1,
+                    fecha2,
+                );
+
+            const milisegundosTrabajados: number = horasTrabajo.reduce(
+                (acc, curr) => {
+                    const horaEntrada: Date = new Date(
+                        `2025-01-01T${curr.horaEntrada}`,
+                    );
+                    const horaSalida: Date = new Date(
+                        `2025-01-01T${curr.horaSalida}`,
+                    );
+
+                    return (
+                        acc +
+                        (new Date(horaSalida).getTime() -
+                            new Date(horaEntrada).getTime())
+                    );
+                },
+                0,
             );
 
-        const milisegundosTrabajados: number = horasTrabajo.reduce(
-            (acc, curr) => {
-                const horaEntrada: Date = new Date(
-                    `2025-01-01T${curr.horaEntrada}`,
-                );
-                const horaSalida: Date = new Date(
-                    `2025-01-01T${curr.horaSalida}`,
-                );
+            // hay 3600000 milisegundos en una hora
+            const horasTrabajadas: number = milisegundosTrabajados / 3600000;
+            const diasTrabajados: number = horasTrabajo.length;
+            const horasExtra: number =
+                horasTrabajadas - 8 * diasTrabajados > 0
+                    ? horasTrabajadas - 8 * diasTrabajados
+                    : 0;
+            const horasNormales: number = horasTrabajadas - horasExtra;
+            const payroll: number =
+                +tarifaHoraria * (horasNormales + horasExtra * 1.5);
 
-                return (
-                    acc +
-                    (new Date(horaSalida).getTime() -
-                        new Date(horaEntrada).getTime())
-                );
-            },
-            0,
-        );
-
-        const horasTrabajadas: number = milisegundosTrabajados / 3600000;
-        const diasTrabajados: number = horasTrabajo.length;
-        const horasExtra: number =
-            horasTrabajadas - 8 * diasTrabajados > 0
-                ? horasTrabajadas - 8 * diasTrabajados
-                : 0;
-        const horasNormales: number = horasTrabajadas - horasExtra;
-        const payroll: number =
-            +tarifaHoraria * (horasNormales + horasExtra * 1.5);
-
-        return {
-            diasTrabajados,
-            horasTrabajadas,
-            horasNormales,
-            horasExtra,
-            tarifaHoraria,
-            payroll,
-        };
+            return {
+                diasTrabajados,
+                horasTrabajadas,
+                horasNormales,
+                horasExtra,
+                tarifaHoraria,
+                payroll,
+            };
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(error.message);
+                return { message: error.message };
+            }
+            return { message: 'Error al obtener la nómina' };
+        }
     }
 }
