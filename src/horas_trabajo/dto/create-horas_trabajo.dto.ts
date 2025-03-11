@@ -13,11 +13,11 @@ export class CreateHorasTrabajoDto {
 
     @IsNotEmpty()
     @IsString()
-    @Matches(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)
+    @Matches(/^[0-9]{2}:[0-9]{2}$/)
     readonly horaEntrada: string;
 
     @IsNotEmpty()
     @IsString()
-    @Matches(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)
+    @Matches(/^[0-9]{2}:[0-9]{2}$/)
     readonly horaSalida: string;
 }
