@@ -21,8 +21,12 @@ export class HorasTrabajoService {
                 createHorasTrabajoDto,
             );
         } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(error.message);
+            }
+
             throw new HttpException(
-                'Error al crear el registro. Posible duplicación de dias trabajados',
+                `Error al crear el registro.`,
                 HttpStatus.BAD_REQUEST,
             );
         }
