@@ -90,6 +90,7 @@ export class HorasTrabajoController {
         }
 
         try {
+            // se calcula el payroll
             const horasTrabajo =
                 await this.horasTrabajoService.findByEmpleadoAndFechas(
                     idNumber,
@@ -132,7 +133,7 @@ export class HorasTrabajoController {
                 horasNormales,
                 horasExtra,
                 tarifaHoraria,
-                payroll,
+                payroll: parseFloat(payroll.toFixed(2)),
             };
         } catch (error: unknown) {
             if (error instanceof Error) {
