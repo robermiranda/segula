@@ -1,9 +1,11 @@
-# filepath: /home/roberto/desarrollo/pruebaTecnica/prueba-tecnica-segula/Dockerfile
 # Usa una imagen base de Node.js
-FROM node:16-alpine
+FROM node:23-alpine
 
 # Establece el directorio de trabajo
 WORKDIR /app
+
+# url de conexión a la base de datos
+ENV DATABASE_URL=postgresql://postgres.kbnohgtnuropljdbupay:T8qLQLjJaIn39jTL@aws-0-us-east-1.pooler.supabase.com:6543/postgres
 
 # Copia el package.json y el package-lock.json
 COPY package*.json ./

@@ -1,17 +1,5 @@
-version: '3.8'
-
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     ports:
       - '3000:3000'
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-    depends_on:
-      - wait-for-it
-
-  wait-for-it:
-    image: willwill/wait-for-it
-    entrypoint: ["wait-for-it.sh", "-t", "0", "db:5432"]

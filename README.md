@@ -138,9 +138,9 @@ Para dockerizar la *API REST* proporciono los archivos necesarios:
 
 - docker-compose.yml
 
-Es necesario tener un archivo *.env* que contenga la variable
-de ambiente *DATABASE_URL* con la url de conexión a la base de datos
-la cual, por seguridad, es privada. 
+para crear la imagen docker de la prueba técnica se debe ejecutar el comando:
+
+`docker compose up`
 
 # EJEMPLOS
 
