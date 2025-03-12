@@ -1,37 +1,110 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# SEGULA TECHNOLOGIES RESTFULL API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+El código alojado en éste repositorio corresponde a la prueba técnica
+para el proceso de trabajo en **Segula Technologies**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Se trata de una **API REST** para la gestión de empleados así como sus horas
+laborales.
 
-## Description
+El proyecto esta desplegado en la nube *Render* y la documentación puede ser
+consultada siguiendo el link: [segula api](https://segula.onrender.com/api)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## DESARROLLO
 
-## Project setup
+Al inicio se había planteado usar *express.js* como tecnología base para
+desarrollar la *API*; esta consideración esta sustentada por el hecho de
+que el desarrollador **Roberto Miranda** cuenta con amplia experiencia en
+este framework, sin embargo entre los requisitos para el puesto en
+*Segula Technologies* se menciona tener conocimientos en *nestjs*, entonces
+me tomé el tiempo para entender las ventajas que ofrece *nestjs* en
+comparación con *expressjs* y entendí de inmediato que son muchas las ventajas,
+pués *nestjs* ya tiene integradas las siguientes tecnologías:
+
+- typescript
+- typeorm
+- swagger
+
+Tecnologías requeridas en ésta prueba técnica. Por esta razón decidí aprender
+*nestjs* y usarlo como tecnología base.
+
+## ARQUITECTURA
+
+La arquitectura de la prueba técnica quedá determinada por lo que es, una
+**API REST** sobre el protocolo **HTTP** que por construcción es **stateless**
+
+Los componentes de la *API* quedan determinados por el Framework elegido *nestjs*:
+
+![arquitectura](./img/arquitectura.png)
+
+- Modules - encapsula los controllers y services en una sola unidad lógica
+- Controllers - recibe las peticiones http
+- Services - uso de typeorm para conectarse a la base de datos
+- Guards - realiza validaciones a las peticiones de entrada
+
+Se aplica el paradigma de programación *OOP* en todo el proyecto y para la
+inyección de dependencias se usa la técnica *Inversion Of Control* pero
+de esto se encarga el framework de tal manera que el desarrollador no necesita
+hacer escribir código para la *IoC*.
+
+## BASE DE DATOS
+
+Hay dos tipos de bases de datos a usar, las del tipo *SQL* y las que son *NoSQL*. Yo
+he elegido *postgresql* que es de tipo *SQL*.
+
+En la descripción del proyecto quedan claras dos entidades:
+
+- Empleado
+- Horas Trabajadas
+
+Claramente para una instancia de *Empleado* le corresponden varias instancias de la
+entidad *Horas Trabajadas*.
+
+El enunciado anterior sugiere un modelo *Entidad - Relación* por lo que debemos
+usar un manejador de tipo relacional *SQL*. Hemos elegido *postgres* la cual está
+montada en la nube *supabase*.
+
+![esquema db](./img/db-schema.png)
+
+La Tabla *Empleado* tiene dos campos:
+
+- id: primary key
+- nombre: el nombre del empleado
+
+Siendo irrelevante agragar más campos.
+
+La tabla *Horas_Trabajo* tiene varios campos:
+
+- id: primary key
+- empleadoId: foreign key hacia la propiedad id de la tabla *Empleado*
+- fecha: la fecha de un día de trabajo
+- hora_entrada: la hora en que el empleado se presento a trabajar
+- hora_salida: la hora en que el empleado salio de trabajar
+
+A la tabla *horas_trabjo* se le agrego la siguiente restricción:
+
+```bash
+alter table horas_trabajo
+add constraint unique_horas_trabajo
+unique ("empleadoId", "fecha")
+```
+para evitar que en la tabla se agreguen mas de un registro de
+un *empleado* con la misma *fecha*. Es decir se evita la duplicidad
+en la tabla de *fecha* para el mismo *empleado*
+
+A la base de datos también se le delega la eliminación de los
+registros en la tabla *horas_trabajo* cuando se elimina un registro
+de la tabla *empleado*: Esto se logra estableciendo la restricción
+*ON DELETE CASCADE* a la llave foranea *empleadoId* en la tabla
+*horas_trabajo*
+
+
+## PROJECT SETUP
 
 ```bash
 $ npm install
 ```
 
-## Compile and run the project
+## EJECURAR Y COMPILAR
 
 ```bash
 # development
@@ -44,55 +117,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Run tests
+## CONTACTO
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- Author - [Roberto Miranda Morales](https://romix-dev.netlify.app/)
+- mail - rob.mirandam@gmail.com
