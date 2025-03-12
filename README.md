@@ -87,9 +87,18 @@ alter table horas_trabajo
 add constraint unique_horas_trabajo
 unique ("empleadoId", "fecha")
 ```
-para evitar que en la tabla se agreguen mas de un registro de
-un *empleado* con la misma *fecha*. Es decir se evita la duplicidad
-en la tabla de *fecha* para el mismo *empleado*
+para evitar que en la tabla se agreguen más de un registro de
+un *empleadoId* con la misma *fecha*. Es decir se evitan registros
+como en el siguiente ejemplo:
+
+|id | empladoId | fecha | hora_entrada | hora_salida |
+|-------|-------|-------|-------|-------|
+| 7 | 9 | 2025-03-12 | 12:00:00 | 22:00:00 |
+| 8 | 9 | 2025-03-12 | 10:30:00 | 20:30:00 |
+
+
+en donde *empleadoId* y *fecha* tienene el mismo valor en ambos
+registros.
 
 A la base de datos también se le delega la eliminación de los
 registros en la tabla *horas_trabajo* cuando se elimina un registro
