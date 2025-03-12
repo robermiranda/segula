@@ -7,7 +7,9 @@ Se trata de una **API REST** para la gestión de empleados así como sus horas
 laborales.
 
 El proyecto esta desplegado en la nube *Render* y la documentación puede ser
-consultada siguiendo el link: [segula api](https://segula.onrender.com/api)
+consultada siguiendo el link:
+
+[segula.onrender.com/api](https://segula.onrender.com/api)
 
 ## DESARROLLO
 
@@ -138,7 +140,11 @@ Para dockerizar la *API REST* proporciono los archivos necesarios:
 
 - docker-compose.yml
 
-para crear la imagen docker de la prueba técnica se debe ejecutar el comando:
+para crear la imagen docker de la prueba técnica primero hay que clonar el proyecto:
+
+`git clone git@github.com:robermiranda/segula.git`
+
+y después ejecutamos el comando docker:
 
 `docker compose up`
 
@@ -243,6 +249,15 @@ es decir, para el siguiente ejemplo:
 en el calculo del payroll se consideran 9 horas laboradas en el día
 2025-02-06 para el empleado con *id = 1*, por lo que NO se consideran
 8 horas laboradas mas 1 hora de comida.
+
+Para agregar un registro de empleado hacemos una petición `POST` usando
+`curl` como en el siguiente ejemplo:
+
+```
+curl -d '{"nombre":"Ricardo Larios"}' -H "Content-Type: application/json" -X POST https://segula.onrender.com/empleado
+```
+
+Para más ejemplos puede consultar la api: [segula.onrender.com/api](https://segula.onrender.com/api)
 
 ## CONTACTO
 
