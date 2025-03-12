@@ -97,6 +97,10 @@ de la tabla *empleado*: Esto se logra estableciendo la restricción
 *ON DELETE CASCADE* a la llave foranea *empleadoId* en la tabla
 *horas_trabajo*
 
+Dado que *nestjs* ya trae integrado *Typeorm* entonces se hace uso de
+este *ORM* para el manejo de las consultas a la base de datos desde
+el código.
+
 
 ## PROJECT SETUP
 
@@ -116,6 +120,18 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## DOCKER
+
+Para dockerizar la *API REST* proporciono los archivos necesarios:
+
+- Dockerfile
+
+- docker-compose.yml
+
+Es necesario tener un archivo *.env* que contenga la variable
+de ambiente *DATABASE_URL* con la url de conexión a la base de datos
+la cual, por seguridad, es privada. 
 
 ## CONTACTO
 
