@@ -65,6 +65,16 @@ export class EmpleadoController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Lista de empleados',
+        example: [
+            {
+                id: 1,
+                nombre: 'Roberto Miranda',
+            },
+            {
+                id: 2,
+                nombre: 'Gabriela Morales',
+            },
+        ],
     })
     findAll() {
         return this.empleadoService.findAll();
@@ -92,6 +102,10 @@ export class EmpleadoController {
     @ApiResponse({
         status: HttpStatus.BAD_REQUEST,
         description: 'Identificador NO válido',
+        example: {
+            id: 12,
+            nombre: 'Juan Carlos Zamora',
+        },
     })
     @ApiResponse({
         status: HttpStatus.BAD_REQUEST,

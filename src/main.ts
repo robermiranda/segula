@@ -15,7 +15,6 @@ async function bootstrap() {
             de calcular el payroll del empleado.`,
         )
         .setVersion('1.0')
-        .addTag('nestjs')
         .build();
     const documentFactory = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, documentFactory);
