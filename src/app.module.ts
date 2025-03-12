@@ -19,6 +19,7 @@ import { HorasTrabajo } from './horas_trabajo/entities/horas_trabajo.entity';
             useFactory: (configService: ConfigService) => ({
                 type: 'postgres',
                 url: configService.get<string>('DATABASE_URL'),
+                synchronize: false,
                 entities: [Empleado, HorasTrabajo],
             }),
             inject: [ConfigService],
