@@ -142,6 +142,108 @@ Es necesario tener un archivo *.env* que contenga la variable
 de ambiente *DATABASE_URL* con la url de conexión a la base de datos
 la cual, por seguridad, es privada. 
 
+# EJEMPLOS
+
+Puedes realizar las siguientes peticiones GET desde el navegador:
+
+- [/empleado](https://segula.onrender.com/empleado) - Obtiene la
+lista de todos los empleados
+
+```
+[
+  {
+    "id": 1,
+    "nombre": "Roberto Miranda"
+  },
+  {
+    "id": 2,
+    "nombre": "Gabriela Morales"
+  }, ...
+```
+
+- [/empleado/1](https://segula.onrender.com/empleado/1) - Obtiene
+el registro del empleado con *id = 1*
+
+
+```
+{
+  "id": 1,
+  "nombre": "Roberto Miranda"
+}
+```
+
+- [/horas-trabajo](https://segula.onrender.com/horas-trabajo) - Obtiene
+la lista de registros en la tabla horas_trabajo la cual guarda una relación
+de las horas trabajadas por día para cada empleado
+
+- [/horas-trabajo/empleado/1](https://segula.onrender.com/horas-trabajo/empleado/1) -
+obtiene la lista de las horas trabajadas para el empleado con *id = 1*
+
+```
+[
+  {
+    "id": 1,
+    "fecha": "2025-02-01T00:00:00.000Z",
+    "horaEntrada": "08:00:00",
+    "horaSalida": "17:00:00",
+    "empleadoId": 1
+  },
+  {
+    "id": 33,
+    "fecha": "2025-02-04T00:00:00.000Z",
+    "horaEntrada": "10:00:00",
+    "horaSalida": "16:40:00",
+    "empleadoId": 1
+  },
+  {
+    "id": 37,
+    "fecha": "2025-02-05T00:00:00.000Z",
+    "horaEntrada": "09:00:00",
+    "horaSalida": "16:55:00",
+    "empleadoId": 1
+  },
+  {
+    "id": 38,
+    "fecha": "2025-02-06T00:00:00.000Z",
+    "horaEntrada": "09:00:00",
+    "horaSalida": "18:00:00",
+    "empleadoId": 1
+  }
+]
+```
+
+- [/horas-trabajo/payroll/1/2025-02-01/2025-02-05/1000](https://segula.onrender.com/horas-trabajo/payroll/1/2025-02-01/2025-02-05/1000) - obtiene el *payroll* para el empleado
+con *id = 1* en el intervalo de fechas [2025-02-01 , 2025-02-05] con una
+tarifa horaria de $1,000.00
+
+```
+{
+  "diasTrabajados": 3,
+  "horasTrabajadas": 23.5833333333333,
+  "horasNormales": 23.5833333333333,
+  "horasExtra": 0,
+  "tarifaHoraria": 1000,
+  "payroll": 23583.33
+}
+```
+
+Es necesario hacer notar que en el calculo del payroll
+**NO estoy considerando la hora de comida del empleado**,
+es decir, para el siguiente ejemplo:
+
+```
+{
+    "id": 38,
+    "fecha": "2025-02-06T00:00:00.000Z",
+    "horaEntrada": "09:00:00",
+    "horaSalida": "18:00:00",
+    "empleadoId": 1
+  }
+```
+en el calculo del payroll se consideran 9 horas laboradas en el día
+2025-02-06 para el empleado con *id = 1*, por lo que NO se consideran
+8 horas laboradas mas 1 hora de comida.
+
 ## CONTACTO
 
 - Author - [Roberto Miranda Morales](https://romix-dev.netlify.app/)
