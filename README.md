@@ -44,7 +44,7 @@ Los componentes de la *API* quedan determinados por el Framework elegido *nestjs
 Se aplica el paradigma de programación *OOP* en todo el proyecto y para la
 inyección de dependencias se usa la técnica *Inversion Of Control* pero
 de esto se encarga el framework de tal manera que el desarrollador no necesita
-hacer escribir código para la *IoC*.
+escribir código para la *IoC*.
 
 ## BASE DE DATOS
 
@@ -103,10 +103,10 @@ registros.
 A la base de datos también se le delega la eliminación de los
 registros en la tabla *horas_trabajo* cuando se elimina un registro
 de la tabla *empleado*: Esto se logra estableciendo la restricción
-*ON DELETE CASCADE* a la llave foranea *empleadoId* en la tabla
-*horas_trabajo*
+`ON DELETE CASCADE` a la llave foranea `empleadoId` en la tabla
+`horas_trabajo`
 
-Dado que *nestjs* ya trae integrado *Typeorm* entonces se hace uso de
+Dado que *nestjs* ya trae integrado **Typeorm** entonces se hace uso de
 este *ORM* para el manejo de las consultas a la base de datos desde
 el código.
 
@@ -213,8 +213,8 @@ obtiene la lista de las horas trabajadas para el empleado con *id = 1*
 ```
 
 - [/horas-trabajo/payroll/1/2025-02-01/2025-02-05/1000](https://segula.onrender.com/horas-trabajo/payroll/1/2025-02-01/2025-02-05/1000) - obtiene el *payroll* para el empleado
-con *id = 1* en el intervalo de fechas [2025-02-01 , 2025-02-05] con una
-tarifa horaria de $1,000.00
+con `id = 1` en el intervalo de fechas `[2025-02-01 , 2025-02-05]` con una
+tarifa horaria de `$1,000.00`
 
 ```
 {
