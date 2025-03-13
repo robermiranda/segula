@@ -148,7 +148,7 @@ y después ejecutamos el comando docker:
 
 `docker compose up`
 
-# EJEMPLOS
+## EJEMPLOS
 
 Puedes realizar las siguientes peticiones GET desde el navegador:
 
