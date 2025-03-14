@@ -2,19 +2,42 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EmpleadoController } from './empleado.controller';
 import { EmpleadoService } from './empleado.service';
 
-describe('EmpleadoController', () => {
-  let controller: EmpleadoController;
+describe('Empleado Controller', () => {
+    let controller: EmpleadoController;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [EmpleadoController],
-      providers: [EmpleadoService],
-    }).compile();
+    const empleados = [
+        {
+            id: 1,
+            nombre: 'Roberto',
+        },
+        {
+            id: 2,
+            nombre: 'Avigail',
+        },
+    ];
 
-    controller = module.get<EmpleadoController>(EmpleadoController);
-  });
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            controllers: [EmpleadoController],
+            providers: [
+                EmpleadoService,
+                {
+                    provide: EmpleadoService,
+                    useValue: {
+                        findAll: jest.fn().mockResolvedValue(empleados),
+                    },
+                },
+            ],
+        }).compile();
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+        controller = module.get<EmpleadoController>(EmpleadoController);
+    });
+
+    it('Should be defined', () => {
+        expect(controller).toBeDefined();
+    });
+
+    it('Finde all empleados', async () => {
+        await expect(controller.findAll()).resolves.toEqual(empleados);
+    });
 });
