@@ -112,6 +112,12 @@ Dado que *nestjs* ya trae integrado **Typeorm** entonces se hace uso de
 este *ORM* para el manejo de las consultas a la base de datos desde
 el código.
 
+## TESTING
+
+Se hace uso de la biblioteca *Jest* para las pruebas unitarias. Para
+probar el *empleado.controller* se debe ejecutar el comando:
+
+`npm run test empleado.controller`
 
 ## PROJECT SETUP
 

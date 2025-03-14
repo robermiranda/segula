@@ -41,3 +41,6 @@ describe('Empleado Controller', () => {
         await expect(controller.findAll()).resolves.toEqual(empleados);
     });
 });
+
+// Example:
+// https://github.com/nestjs/nest/blob/master/sample/05-sql-typeorm/src/users/users.controller.spec.ts
