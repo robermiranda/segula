@@ -13,6 +13,7 @@ async function bootstrap() {
     // factor_hora_extra <- 1.5
     const parametrosService = app.get(ParametrosService);
     await parametrosService.loadJornadaLaboral();
+    await parametrosService.loadFactorHoraExtra();
 
     const config = new DocumentBuilder()
         .setTitle('API Prueba Técnica SEGULA')

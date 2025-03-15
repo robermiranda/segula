@@ -6,6 +6,7 @@ import { Parametro } from './entities/parametro.entity';
 @Injectable()
 export class ParametrosService {
     private jornadaLaboral: number;
+    private factorHoraExtra: number;
 
     constructor(
         @InjectRepository(Parametro)
@@ -24,7 +25,23 @@ export class ParametrosService {
         }
     }
 
+    async loadFactorHoraExtra() {
+        const parametro = await this.parametrosRepository.findOne({
+            where: { nombre: 'factor_hora_extra' },
+        });
+
+        if (parametro) {
+            this.factorHoraExtra = parseInt(parametro.valor, 10);
+        } else {
+            throw new Error('Parámetro "factor_hora_extra" NO encontrado');
+        }
+    }
+
     getJornadaLaboral(): number {
         return this.jornadaLaboral;
+    }
+
+    getFactorHoraExtra(): number {
+        return this.factorHoraExtra;
     }
 }

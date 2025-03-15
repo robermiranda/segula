@@ -238,10 +238,10 @@ export class HorasTrabajoController {
     ) {
         const idNumber: number = parseInt(id, 10);
         const tarifaHoraria: number = parseInt(tarifa, 10);
-        //const JORNADA_LABORAL: number = 8;
         const JORNADA_LABORAL: number =
             this.parametrosService.getJornadaLaboral();
-        const FACTOR_HORAS_EXTRA: number = 1.5;
+        const FACTOR_HORAS_EXTRA: number =
+            this.parametrosService.getFactorHoraExtra();
 
         try {
             // se calcula el payroll
