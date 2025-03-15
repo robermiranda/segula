@@ -5,10 +5,14 @@ import { CreateHorasTrabajoDto } from './dto/create-horas_trabajo.dto';
 import { IdGuard } from '../guards/id.guard';
 import { PayrollGuard } from '../guards/payroll.guard';
 import { ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ParametrosService } from 'src/parametros/parametros.service';
 
 @Controller('horas-trabajo')
 export class HorasTrabajoController {
-    constructor(private readonly horasTrabajoService: HorasTrabajoService) {}
+    constructor(
+        private readonly horasTrabajoService: HorasTrabajoService,
+        private readonly parametrosService: ParametrosService,
+    ) {}
 
     @Post()
     @ApiOperation({
@@ -234,7 +238,9 @@ export class HorasTrabajoController {
     ) {
         const idNumber: number = parseInt(id, 10);
         const tarifaHoraria: number = parseInt(tarifa, 10);
-        const JORNADA_LABORAL: number = 8;
+        //const JORNADA_LABORAL: number = 8;
+        const JORNADA_LABORAL: number =
+            this.parametrosService.getJornadaLaboral();
         const FACTOR_HORAS_EXTRA: number = 1.5;
 
         try {

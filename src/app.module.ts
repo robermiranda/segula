@@ -6,6 +6,8 @@ import { DataSource } from 'typeorm';
 import { Empleado } from './empleado/entities/empleado.entity';
 import { HorasTrabajoModule } from './horas_trabajo/horas_trabajo.module';
 import { HorasTrabajo } from './horas_trabajo/entities/horas_trabajo.entity';
+import { ParametrosService } from './parametros/parametros.service';
+import { Parametro } from './parametros/entities/parametro.entity';
 
 @Module({
     imports: [
@@ -20,11 +22,13 @@ import { HorasTrabajo } from './horas_trabajo/entities/horas_trabajo.entity';
                 type: 'postgres',
                 url: configService.get<string>('DATABASE_URL'),
                 synchronize: false,
-                entities: [Empleado, HorasTrabajo],
+                entities: [Empleado, HorasTrabajo, Parametro],
             }),
             inject: [ConfigService],
         }),
+        TypeOrmModule.forFeature([Parametro]),
     ],
+    providers: [ParametrosService],
 })
 export class AppModule {
     constructor(private dataSource: DataSource) {}

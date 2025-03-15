@@ -2,10 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ParametrosService } from './parametros/parametros.service';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+    // Carga de parametros iniciales:
+    // jornada_labora <- 8
+    // factor_hora_extra <- 1.5
+    const parametrosService = app.get(ParametrosService);
+    await parametrosService.loadJornadaLaboral();
 
     const config = new DocumentBuilder()
         .setTitle('API Prueba Técnica SEGULA')
