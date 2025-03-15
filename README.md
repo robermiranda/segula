@@ -114,10 +114,17 @@ el código.
 
 ## TESTING
 
-Se hace uso de la biblioteca *Jest* para las pruebas unitarias. Para
-probar el *empleado.controller* se debe ejecutar el comando:
+Se hace uso de la biblioteca *Jest* para las pruebas unitarias.
+Se cuenta con un archivo para cada uno de los *controllers*
+con los que cuenta la *API*
 
-`npm run test empleado.controller`
+- `empleado.controller.spec`
+
+- `horas_trabajo.controller.spec`
+
+Para iniciar las prueba se debe ejecutar el siguiente comando:
+
+`npm run test`
 
 ## PROJECT SETUP
 

@@ -3,7 +3,7 @@ import { Controller, Get, Post, Body, Param, UseGuards, HttpStatus } from '@nest
 import { HorasTrabajoService } from './horas_trabajo.service';
 import { CreateHorasTrabajoDto } from './dto/create-horas_trabajo.dto';
 import { IdGuard } from '../guards/id.guard';
-import { PayrollGuard } from 'src/guards/payroll.guard';
+import { PayrollGuard } from '../guards/payroll.guard';
 import { ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @Controller('horas-trabajo')
