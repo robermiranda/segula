@@ -31,7 +31,7 @@ export class ParametrosService {
         });
 
         if (parametro) {
-            this.factorHoraExtra = parseInt(parametro.valor, 10);
+            this.factorHoraExtra = parseFloat(parametro.valor);
         } else {
             throw new Error('Parámetro "factor_hora_extra" NO encontrado');
         }
