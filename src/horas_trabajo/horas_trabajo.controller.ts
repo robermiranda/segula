@@ -44,7 +44,6 @@ export class HorasTrabajoController {
                     fecha: '2025-02-06',
                     horaEntrada: '09:00',
                     horaSalida: '18:00',
-                    nombre: 'Juan Carlos Zamora',
                 },
             },
         },
@@ -237,7 +236,7 @@ export class HorasTrabajoController {
         @Param('tarifa') tarifa: string,
     ) {
         const idNumber: number = parseInt(id, 10);
-        const tarifaHoraria: number = parseInt(tarifa, 10);
+        const tarifaHoraria: number = parseFloat(tarifa);
         const JORNADA_LABORAL: number =
             this.parametrosService.getJornadaLaboral();
         const FACTOR_HORAS_EXTRA: number =
