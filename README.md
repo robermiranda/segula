@@ -237,12 +237,45 @@ tarifa horaria de `$1,000.00`
 
 ```
 {
-  "diasTrabajados": 3,
-  "horasTrabajadas": 23.5833333333333,
-  "horasNormales": 23.5833333333333,
-  "horasExtra": 0,
-  "tarifaHoraria": 1000,
-  "payroll": 23583.33
+  "payrollDia": [
+    {
+      "id": 1,
+      "fecha": "2025-02-01T00:00:00.000Z",
+      "horaEntrada": "08:00:00",
+      "horaSalida": "17:00:00",
+      "empleadoId": 1,
+      "totalHorasTrabajadas": 9,
+      "horasNormales": 8,
+      "horasExtra": 1,
+      "tarifa": 1000,
+      "payroll": 9500
+    },
+    {
+      "id": 33,
+      "fecha": "2025-02-04T00:00:00.000Z",
+      "horaEntrada": "10:00:00",
+      "horaSalida": "16:40:00",
+      "empleadoId": 1,
+      "totalHorasTrabajadas": 6.66666666666667,
+      "horasNormales": 6.66666666666667,
+      "horasExtra": 0,
+      "tarifa": 1000,
+      "payroll": 6666.66666666667
+    },
+    {
+      "id": 37,
+      "fecha": "2025-02-05T00:00:00.000Z",
+      "horaEntrada": "09:00:00",
+      "horaSalida": "16:55:00",
+      "empleadoId": 1,
+      "totalHorasTrabajadas": 7.91666666666667,
+      "horasNormales": 7.91666666666667,
+      "horasExtra": 0,
+      "tarifa": 1000,
+      "payroll": 7916.66666666667
+    }
+  ],
+  "payrollAcumulado": 24083.3333333333
 }
 ```
 
@@ -271,6 +304,16 @@ curl -d '{"nombre":"Ricardo Larios"}' -H "Content-Type: application/json" -X POS
 ```
 
 Para más ejemplos puede consultar la api: [segula.onrender.com/api](https://segula.onrender.com/api)
+
+## CLIENTE WEB
+
+Se ha desarrollado un *cliente web* para este proyecto que es una prueba *backend*.
+Con el cliente se pueden realizar todas operaciones para la gestión de empleados:
+
+[segula-eight.vercel.app](https://segula-eight.vercel.app/)
+
+No me he esmerado en perfeccionar el estilo, sin embargo es un cliente sencillo
+e intuitivo :grinning:
 
 ## CONTACTO
 
