@@ -6,6 +6,7 @@ import { IdGuard } from '../guards/id.guard';
 import { PayrollGuard } from '../guards/payroll.guard';
 import { ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { ParametrosService } from 'src/parametros/parametros.service';
+import { HorasTrabajo } from './entities/horas_trabajo.entity';
 
 @Controller('horas-trabajo')
 export class HorasTrabajoController {
@@ -190,39 +191,72 @@ export class HorasTrabajoController {
         description: 'El identificador único del empleado',
         required: true,
         type: Number,
-        example: 1,
+        example: 15,
     })
     @ApiParam({
         name: 'fecha1',
         description: 'Fecha de inicio del rango (formato: YYYY-MM-DD)',
         required: true,
         type: String,
-        example: '2025-01-01',
+        example: '2025-02-20',
     })
     @ApiParam({
         name: 'fecha2',
         description: 'Fecha de fin del rango (formato: YYYY-MM-DD)',
         required: true,
         type: String,
-        example: '2025-01-31',
+        example: '2025-02-22',
     })
     @ApiParam({
         name: 'tarifa',
         description: 'Tarifa horaria del empleado',
         required: true,
         type: Number,
-        example: 20,
+        example: 10,
     })
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Nómina calculada',
         example: {
-            diasTrabajados: 20,
-            horasTrabajadas: 160,
-            horasNormales: 160,
-            horasExtra: 0,
-            tarifaHoraria: 20,
-            payroll: 3200,
+            payrollDia: [
+                {
+                    id: 67,
+                    fecha: '2025-02-20T06:00:00.000Z',
+                    horaEntrada: '08:00:00',
+                    horaSalida: '19:00:00',
+                    empleadoId: 15,
+                    totalHorasTrabajadas: 11,
+                    horasNormales: 8,
+                    horasExtra: 3,
+                    tarifa: 10,
+                    payroll: 125,
+                },
+                {
+                    id: 68,
+                    fecha: '2025-02-21T06:00:00.000Z',
+                    horaEntrada: '08:00:00',
+                    horaSalida: '19:00:00',
+                    empleadoId: 15,
+                    totalHorasTrabajadas: 11,
+                    horasNormales: 8,
+                    horasExtra: 3,
+                    tarifa: 10,
+                    payroll: 125,
+                },
+                {
+                    id: 69,
+                    fecha: '2025-02-22T06:00:00.000Z',
+                    horaEntrada: '08:00:00',
+                    horaSalida: '17:00:00',
+                    empleadoId: 15,
+                    totalHorasTrabajadas: 9,
+                    horasNormales: 8,
+                    horasExtra: 1,
+                    tarifa: 10,
+                    payroll: 95,
+                },
+            ],
+            payrollAcumulado: 345,
         },
     })
     @ApiResponse({
@@ -237,13 +271,8 @@ export class HorasTrabajoController {
     ) {
         const idNumber: number = parseInt(id, 10);
         const tarifaHoraria: number = parseFloat(tarifa);
-        const JORNADA_LABORAL: number =
-            this.parametrosService.getJornadaLaboral();
-        const FACTOR_HORAS_EXTRA: number =
-            this.parametrosService.getFactorHoraExtra();
 
         try {
-            // se calcula el payroll
             const horasTrabajo =
                 await this.horasTrabajoService.findByEmpleadoAndFechas(
                     idNumber,
@@ -251,46 +280,16 @@ export class HorasTrabajoController {
                     fecha2,
                 );
 
-            const milisegundosTrabajados: number = horasTrabajo.reduce(
-                (acc, curr) => {
-                    const horaEntrada: Date = new Date(
-                        `2025-01-01T${curr.horaEntrada}`,
-                    );
-                    const horaSalida: Date = new Date(
-                        `2025-01-01T${curr.horaSalida}`,
-                    );
+            const payrollDia = this.calculaPayroll(horasTrabajo, tarifaHoraria);
 
-                    return (
-                        acc +
-                        (new Date(horaSalida).getTime() -
-                            new Date(horaEntrada).getTime())
-                    );
-                },
+            const payrollAcumulado = payrollDia.reduce(
+                (acc, current) => acc + current.payroll,
                 0,
             );
 
-            // hay 3,600,000 milisegundos en una hora
-            const horasTrabajadas: number = milisegundosTrabajados / 3600000;
-            const diasTrabajados: number = horasTrabajo.length;
-
-            const horasExtra: number =
-                horasTrabajadas - JORNADA_LABORAL * diasTrabajados > 0
-                    ? horasTrabajadas - JORNADA_LABORAL * diasTrabajados
-                    : 0;
-
-            const horasNormales: number = horasTrabajadas - horasExtra;
-
-            const payroll: number =
-                tarifaHoraria *
-                (horasNormales + horasExtra * FACTOR_HORAS_EXTRA);
-
             return {
-                diasTrabajados,
-                horasTrabajadas,
-                horasNormales,
-                horasExtra,
-                tarifaHoraria,
-                payroll: parseFloat(payroll.toFixed(2)),
+                payrollDia,
+                payrollAcumulado,
             };
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -299,5 +298,45 @@ export class HorasTrabajoController {
             }
             return { message: 'Error al obtener la nómina' };
         }
+    }
+
+    private calculaPayroll(horasTrabajo: HorasTrabajo[], tarifa: number) {
+        const HORAS_JORNADA_LABORAL: number =
+            this.parametrosService.getJornadaLaboral();
+        const FACTOR_HORAS_EXTRA: number =
+            this.parametrosService.getFactorHoraExtra();
+
+        return horasTrabajo.map((htrabajo: HorasTrabajo) => {
+            const horaEntrada: Date = new Date(
+                `2025-01-01T${htrabajo.horaEntrada}`,
+            );
+
+            const horaSalida: Date = new Date(
+                `2025-01-01T${htrabajo.horaSalida}`,
+            );
+
+            const totalMiliseg: number =
+                new Date(horaSalida).getTime() -
+                new Date(horaEntrada).getTime();
+
+            // hay 3,600,000 milisegundos en una hora
+            const totalHorasTrabajadas: number = totalMiliseg / 3600000;
+
+            const _horasExtra = totalHorasTrabajadas - HORAS_JORNADA_LABORAL;
+            const horasExtra: number = _horasExtra > 0 ? _horasExtra : 0;
+            const horasNormales: number = totalHorasTrabajadas - horasExtra;
+
+            const payroll: number =
+                tarifa * (horasNormales + horasExtra * FACTOR_HORAS_EXTRA);
+
+            return {
+                ...htrabajo,
+                totalHorasTrabajadas,
+                horasNormales,
+                horasExtra,
+                tarifa,
+                payroll,
+            };
+        });
     }
 }
