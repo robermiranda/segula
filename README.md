@@ -157,9 +157,17 @@ para crear la imagen docker de la prueba técnica primero hay que clonar el proy
 
 `git clone git@github.com:robermiranda/segula.git`
 
-y después ejecutamos el comando docker:
+Para crear la imagen de la aplicación ejecutamos el comando docker:
 
 `docker compose up`
+
+Con la imagen creada procedemos a crear el contenedor con el siguiente comando:
+
+`docker run -d -p 3000:3000 prueba-tecnica-segula-app:latest`
+
+habrimos un navegador para consultar la *API*:
+
+`localhost:3000/api`
 
 ## EJEMPLOS
 
